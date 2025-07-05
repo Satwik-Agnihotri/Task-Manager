@@ -4,7 +4,7 @@ import { motion, AnimatePresence } from "framer-motion";
 import TaskForm from "./TaskForm";
 import TaskList from "./TaskList";
 import TaskFilterIcon from "../assets/Filter.png";
-import TaskFilterIconDark from "../assets/Filter_dark.png";
+import TaskFilterIconDark from "../assets/Filter_Dark.png";
 import { saveTasks, loadTasks } from "../components/localStorage";
 import { useDarkMode } from "../components/DarkModeContext";
 
