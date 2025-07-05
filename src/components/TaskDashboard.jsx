@@ -3,8 +3,8 @@ import { useNavigate } from "react-router-dom";
 import { motion, AnimatePresence } from "framer-motion";
 import TaskForm from "./TaskForm";
 import TaskList from "./TaskList";
-import TaskFilterIcon from "../assets/filter.png";
-import TaskFilterIconDark from "../assets/filter_dark.png";
+import TaskFilterIcon from "../assets/Filter.png";
+import TaskFilterIconDark from "../assets/Filter_dark.png";
 import { saveTasks, loadTasks } from "../components/localStorage";
 import { useDarkMode } from "../components/DarkModeContext";
 
