@@ -1,18 +1,34 @@
-# CheckSy 📝
+# 📝 CheckSy Task Tracker
 
 ![CheckSy Banner](https://raw.githubusercontent.com/Satwik-Agnihotri/Task-Manager/main/src/assets/logo.png)
 
-CheckSy is a beautifully sketched, enterprise-grade Task Manager designed to make productivity feel less like a chore and more like a doodle! 🎨 Built with a highly responsive, animated frontend and a robust Java Spring Boot backend.
+**CheckSy** is a beautifully sketched, enterprise-grade Task Manager designed to make productivity feel less like a chore and more like a doodle! 🎨 Built with a highly responsive, animated frontend and a robust Java Spring Boot backend.
 
-## ✨ Features
-- **Dynamic Sketched UI**: A highly stylized, hand-drawn aesthetic using Tailwind CSS and Framer Motion.
-- **Enterprise Backend**: Powered by Java Spring Boot for high performance, scalability, and secure RESTful APIs.
-- **Secure Authentication**: Full JWT-based authentication with Bcrypt password hashing.
-- **Guest Sessions**: Instantly try out CheckSy with one-click Guest Login (temporary auto-expiring sessions).
-- **Task Management**: Create, update, complete, and delete tasks in real-time.
-- **Dark Mode 🌙**: Fully supported native dark mode with smooth transitioning.
+## 🚀 Key Features
 
-## 🚀 Tech Stack
+### ✅ Complete Task Lifecycle (CRUD)
+* **Create** tasks with descriptions, priorities, and tags
+* **Read** and view tasks in beautifully styled lists
+* **Update** tasks and toggle completion
+* **Delete** irrelevant or outdated tasks
+
+### 🎯 Prioritization & Smart Filtering
+* Assign **Low**, **Medium**, or **High** priority
+* Add **multiple tags** (e.g., `Work`, `Urgent`, `Personal`)
+* **Search** instantly by keyword or filter by Status/Priority
+
+### 🌗 Light & Dark Mode
+* Fully supported native dark mode with smooth transitioning to match your environment.
+
+### 🔐 Secure Authentication & Guest Mode
+* Full JWT-based authentication with Bcrypt password hashing.
+* Explore the app instantly with a temporary **guest session** (auto-expires for privacy).
+
+### ✨ Hand-drawn UI & Fluid Animations
+* A highly stylized, hand-drawn aesthetic using Tailwind CSS.
+* Clean, fluid transitions via Framer Motion for buttons, forms, lists, and pages.
+
+## 💻 Tech Stack
 
 ### Frontend
 - **React.js** (Vite)
@@ -25,7 +41,9 @@ CheckSy is a beautifully sketched, enterprise-grade Task Manager designed to mak
 - **MongoDB** (NoSQL Database for flexible document storage)
 - **JJWT** (JSON Web Token implementation)
 
-## 🛠️ Getting Started
+## 🛠️ Installation & Setup
+
+To run this project locally, follow these steps:
 
 ### Prerequisites
 - [Node.js](https://nodejs.org/)
@@ -40,14 +58,20 @@ cd spring-backend
 ```
 
 ### 2. Start the Frontend
-The frontend connects to the backend automatically.
+The frontend connects to the backend automatically. Open a new terminal:
 ```bash
 npm install
 npm run dev
 ```
 
-## 📸 Screenshots
-*(Coming Soon)*
+Visit [http://localhost:5173](http://localhost:5173) (or the port Vite provides) to view the app!
+
+## 🔗 Live Demo
+Try the original frontend-only demo live here:
+👉 [https://checksy-task.netlify.app/](https://checksy-task.netlify.app/)
+
+## 🖼 Screenshots
+(https://drive.google.com/drive/folders/1CC9LyO0IDwiuVKuNrn2JbHOGawjZiiyB?usp=drive_link)
 
 ## 🤝 Contributing
 Contributions, issues, and feature requests are welcome!
