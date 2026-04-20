@@ -5,10 +5,14 @@ import Logo from "../assets/logo.png";
 import LogoDark from "../assets/logo_dark.png";
 import ArrowPng from "../assets/arrow.png";
 import { useDarkMode } from "../components/DarkModeContext";
+import { authService } from "../services/api";
 
 const Login = () => {
   const navigate = useNavigate();
   const [showSplash, setShowSplash] = useState(true);
+  const [email, setEmail] = useState('');
+  const [password, setPassword] = useState('');
+  const [errorMsg, setErrorMsg] = useState('');
   const { isDarkMode } = useDarkMode();
 
   useEffect(() => {
@@ -25,9 +29,9 @@ const Login = () => {
     visible: {
       opacity: 1,
       scale: 1,
-      transition: { type: "spring", stiffness: 100, damping: 15, staggerChildren: 0.2 },
+      transition: { duration: 0.6, type: "spring", stiffness: 100 },
     },
-    exit: { opacity: 0, scale: 0.9, transition: { duration: 0.4, ease: "easeOut" } },
+    exit: { opacity: 0, scale: 1.1, filter: "blur(10px)", transition: { duration: 0.5 } },
   };
 
   const itemVariants = {
@@ -49,11 +53,25 @@ const Login = () => {
     tap: { scale: 0.95 },
   };
 
-  const handleGuestLogin = () => {
-    const expiry = Date.now() + 2 * 60 * 1000;
-    localStorage.setItem("guest", "true");
-    localStorage.setItem("guestExpiry", expiry.toString());
-    navigate("/dashboard");
+  const handleGuestLogin = async () => {
+    setErrorMsg('');
+    try {
+      await authService.guestLogin();
+      navigate("/dashboard");
+    } catch (error) {
+      setErrorMsg("Guest login failed");
+    }
+  };
+
+  const handleLogin = async (e) => {
+    e.preventDefault();
+    setErrorMsg('');
+    try {
+      await authService.login({ email, password });
+      navigate("/dashboard");
+    } catch (error) {
+      setErrorMsg(error.response?.data?.message || 'Invalid email or password');
+    }
   };
 
   return (
@@ -156,20 +174,30 @@ const Login = () => {
                 Your sketched task tracker ✏️
               </motion.p>
 
+              <AnimatePresence>
+                {errorMsg && (
+                  <motion.div
+                    initial={{ opacity: 0, y: -10 }}
+                    animate={{ opacity: 1, y: 0 }}
+                    exit={{ opacity: 0, y: -10 }}
+                    className="text-red-500 font-bold text-sm bg-red-100 dark:bg-red-900/30 border-2 border-red-500 rounded-lg px-3 py-2 w-full text-center shadow-[2px_2px_0_0_#ef4444]"
+                  >
+                    Oops! {errorMsg}
+                  </motion.div>
+                )}
+              </AnimatePresence>
+
               <motion.form
                 className="w-full flex flex-col gap-4 mt-2 px-2"
                 variants={itemVariants}
-                onSubmit={(e) => {
-                  e.preventDefault();
-                  localStorage.removeItem("guest");
-                  localStorage.removeItem("guestExpiry");
-                  navigate("/dashboard");
-                }}
+                onSubmit={handleLogin}
               >
                 <input
                   type="email"
                   required
                   placeholder="Email Address"
+                  value={email}
+                  onChange={(e) => setEmail(e.target.value)}
                   className={`w-full border-[2.5px] py-3 px-4 rounded-xl shadow-[2px_2px_0_0_black] outline-none focus:ring-2 ${
                     isDarkMode
                       ? "border-white bg-gray-600 text-white placeholder-gray-400 focus:ring-blue-400"
@@ -180,6 +208,8 @@ const Login = () => {
                   type="password"
                   required
                   placeholder="Password"
+                  value={password}
+                  onChange={(e) => setPassword(e.target.value)}
                   className={`w-full border-[2.5px] py-3 px-4 rounded-xl shadow-[2px_2px_0_0_black] outline-none focus:ring-2 ${
                     isDarkMode
                       ? "border-white bg-gray-600 text-white placeholder-gray-400 focus:ring-blue-400"

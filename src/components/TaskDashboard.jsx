@@ -5,13 +5,13 @@ import TaskForm from "./TaskForm";
 import TaskList from "./TaskList";
 import TaskFilterIcon from "../assets/Filter.png";
 import TaskFilterIconDark from "../assets/Filter_Dark.png";
-import { saveTasks, loadTasks } from "../components/localStorage";
 import { useDarkMode } from "../components/DarkModeContext";
+import { taskService, authService } from "../services/api";
 
 const Dashboard = () => {
   const { isDarkMode } = useDarkMode();
 
-  const [tasks, setTasks] = useState(() => loadTasks());
+  const [tasks, setTasks] = useState([]);
   const [searchTerm, setSearchTerm] = useState("");
   const [statusFilter, setStatusFilter] = useState("All");
   const [priorityFilter, setPriorityFilter] = useState("All");
@@ -25,8 +25,16 @@ const Dashboard = () => {
   const dashboardRef = useRef(null);
 
   useEffect(() => {
-    saveTasks(tasks);
-  }, [tasks]);
+    const fetchTasks = async () => {
+      try {
+        const data = await taskService.getTasks();
+        setTasks(data);
+      } catch (error) {
+        console.error("Failed to fetch tasks", error);
+      }
+    };
+    fetchTasks();
+  }, []);
 
   useEffect(() => {
     const isGuest = localStorage.getItem("guest") === "true";
@@ -40,7 +48,7 @@ const Dashboard = () => {
           clearInterval(interval);
           setShowGuestAlert(true);
           setTimeout(() => {
-            localStorage.clear();
+            authService.logout();
             navigate("/");
           }, 3000);
         } else {
@@ -52,29 +60,43 @@ const Dashboard = () => {
     }
   }, []);
 
-  const handleAddTask = (task) => {
-    setTasks([task, ...tasks]);
+  const handleAddTask = async (taskData) => {
+    try {
+      const newTask = await taskService.createTask(taskData);
+      setTasks([newTask, ...tasks]);
+    } catch (error) {
+      console.error("Failed to add task", error);
+    }
   };
 
-  const handleToggleComplete = (id) => {
-    setTasks((prev) =>
-      prev.map((task) =>
-        task.id === id ? { ...task, completed: !task.completed } : task
-      )
-    );
+  const handleToggleComplete = async (id) => {
+    const taskToUpdate = tasks.find(t => t.id === id);
+    if (!taskToUpdate) return;
+    try {
+      const updatedTask = await taskService.updateTask(id, { completed: !taskToUpdate.completed });
+      setTasks((prev) => prev.map((task) => (task.id === id ? updatedTask : task)));
+    } catch (error) {
+      console.error("Failed to update task", error);
+    }
   };
 
-  const handleDeleteTask = (id) => {
-    setTasks((prev) => prev.filter((task) => task.id !== id));
+  const handleDeleteTask = async (id) => {
+    try {
+      await taskService.deleteTask(id);
+      setTasks((prev) => prev.filter((task) => task.id !== id));
+    } catch (error) {
+      console.error("Failed to delete task", error);
+    }
   };
 
   // THIS IS THE CRITICAL FUNCTION FOR EDITING
-  const handleEditTask = (id, updatedTaskData) => {
-    setTasks((prev) =>
-      prev.map((task) =>
-        task.id === id ? { ...task, ...updatedTaskData } : task
-      )
-    );
+  const handleEditTask = async (id, updatedTaskData) => {
+    try {
+      const updatedTask = await taskService.updateTask(id, updatedTaskData);
+      setTasks((prev) => prev.map((task) => (task.id === id ? updatedTask : task)));
+    } catch (error) {
+      console.error("Failed to edit task", error);
+    }
   };
 
   const filteredTasks = tasks.filter((task) => {
@@ -170,7 +192,7 @@ const Dashboard = () => {
         <button
           className={`px-4 py-2 text-sm border-[2px] ${isDarkMode ? 'border-white bg-red-500 text-white shadow-[3px_3px_0_0_white] hover:bg-red-600' : 'border-black bg-red-200 text-black shadow-[3px_3px_0_0_black] hover:bg-red-300'} rounded-xl transition-all`}
           onClick={() => {
-            localStorage.clear();
+            authService.logout();
             navigate("/");
           }}
         >

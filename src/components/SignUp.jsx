@@ -1,29 +1,35 @@
 import React, { useState } from 'react';
 import { motion } from 'framer-motion';
 import { Link, useNavigate } from 'react-router-dom';
-import { useDarkMode } from '../components/DarkModeContext'; // <--- CORRECTED: Import from components
+import { useDarkMode } from '../components/DarkModeContext';
+import { authService } from '../services/api';
 
 const SignUp = () => {
   const [username, setUsername] = useState('');
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [confirmPassword, setConfirmPassword] = useState('');
+  const [errorMsg, setErrorMsg] = useState("");
   const navigate = useNavigate();
   const { isDarkMode } = useDarkMode();
 
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
+    setErrorMsg("");
     if (password !== confirmPassword) {
-      alert("Passwords do not match!");
+      setErrorMsg("Passwords don't match!");
       return;
     }
     if (!username || !email || !password || !confirmPassword) {
-      alert("Please fill in all fields.");
+      setErrorMsg("Please fill in all fields.");
       return;
     }
-    console.log('Sign Up Data:', { username, email, password });
-    alert('Sign Up successful! (This is a demo, no actual registration occurred)');
-    navigate('/');
+    try {
+      await authService.register({ username, email, password });
+      navigate('/dashboard');
+    } catch (error) {
+      setErrorMsg(error.response?.data?.message || 'Registration failed');
+    }
   };
 
   const formVariants = {
@@ -80,6 +86,19 @@ const SignUp = () => {
         >
           Sign Up
         </motion.h2>
+
+        <AnimatePresence>
+          {errorMsg && (
+            <motion.div
+              initial={{ opacity: 0, y: -10 }}
+              animate={{ opacity: 1, y: 0 }}
+              exit={{ opacity: 0, y: -10 }}
+              className="text-red-500 font-bold text-sm bg-red-100 dark:bg-red-900/30 border-2 border-red-500 rounded-lg px-3 py-2 w-full text-center shadow-[2px_2px_0_0_#ef4444]"
+            >
+              Oops! {errorMsg}
+            </motion.div>
+          )}
+        </AnimatePresence>
 
         <form onSubmit={handleSubmit} className="w-full flex flex-col gap-4">
           <motion.input
